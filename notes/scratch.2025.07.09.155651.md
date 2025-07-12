@@ -142,6 +142,6 @@ const mockEncryptedEvent = {
 
 // We pass our mockMx object here
 const decryptedContent = await decryptDraft(mockMx, mockEncryptedEvent);
-console.log('Decrypted Content:', decryptedContent);
+console.log('Decrypted Content:', JSON.stringify(decryptedContent));
 // Expected output: The 'Hello World' content from our mock
 <!-- #endraw -->
