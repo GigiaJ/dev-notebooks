@@ -20,22 +20,6 @@ jupyter:
     name: tslab
 ---
 
-Alright to start we'll bind this together with
-
-```
-jupytext --set-formats ipynb,md --output /home/jaggar/Dendron/dependencies/localhost/dev/notes/scratch.2025.07.09.155651.md  --sync /home/jaggar/Code/cinny/notebooks/draft-sync.ipynb
-```
-
-
-Next I want to run a simple test to see how Jupyter notebooks work.
-
-<!-- #raw -->
-console.log('This is a test');
-<!-- #endraw -->
-
-# Cross Device Draft Sync
-
-
 ##### Problem to solve
 Outlining the issue to solve is as followed:
 
