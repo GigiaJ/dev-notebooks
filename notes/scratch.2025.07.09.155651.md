@@ -8,7 +8,7 @@ jupyter:
   jupytext:
     cell_metadata_filter: -all
     formats: ipynb,md
-    main_language: python
+    main_language: typescript
     text_representation:
       extension: .md
       format_name: markdown
@@ -50,7 +50,7 @@ generic way to decrypt, so we do have to utilize casting our CryptoAPI to the Cr
 ##### Mocking
 Now we're going to begin with mocking out the Matrix client to test the rest of the behavior in the file.
 
-<!-- #raw -->
+```typescript
 // A fake MatrixClient for testing purposes
 const mockMx = {
   getUserId: () => '@user:example.com',
@@ -78,7 +78,7 @@ const mockMx = {
 
 Now we'll start with pulling out toPlainText for testing since it has no inherent dependencies:
 
-```python
+```typescript
 // --- The function to test ---
 function toPlainText(nodes: any[] | null | undefined): string {
   if (!Array.isArray(nodes)) {
@@ -101,7 +101,7 @@ console.log('Plain Text Result:', plainTextResult);
 
 Now we'll test a piece that *does* have dependencies in getContentFromEvent
 
-<!-- #raw -->
+```typescript
 // --- The functions to test ---
 const getContentFromEvent = (event: any) => {
   const decryptedContent = event.getClearContent();
