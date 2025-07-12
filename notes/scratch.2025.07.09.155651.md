@@ -96,11 +96,9 @@ Now we'll start with pulling out toPlainText for testing since it has no inheren
 
 ```typescript
 // --- The function to test ---
-function toPlainText(nodes: any[] | null | undefined): string {
-  if (!Array.isArray(nodes)) {
-    return '';
-  }
-  return nodes.map((n) => (n as any).children?.map((c: any) => c.text).join('') ?? '').join('\n');
+const toPlainText = (nodes: any[] | null | undefined): string => {
+  if (!Array.isArray(nodes)) return '';
+  return nodes.map((n) => n.children?.map((c: any) => c.text).join('') ?? '').join('\n');
 }
 
 
@@ -129,7 +127,7 @@ const getContentFromEvent = (event: any) => {
   return decryptedContent.content;
 };
 
-async function decryptDraft(mx: any, savedEventData: any): Promise<any | null> {
+const decryptDraft = async (mx: any, savedEventData: any): Promise<any | null> => {
   const cryptoApi = mx.getCrypto();
   if (!cryptoApi) return null;
 
