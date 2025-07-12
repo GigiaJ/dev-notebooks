@@ -332,11 +332,6 @@ const Transforms = {
 const Editor = {
   end: (editor: any, location: any) => 'end_location', // Just needs to return something
 };
-
-// This is our spy for the state update function
-const setMsgDraft = (newDraft: any) => {
-  newDraftState = newDraft;
-};
 ```
 
 ```typescript
@@ -344,7 +339,8 @@ const setMsgDraft = (newDraft: any) => {
 
 // Logic from `handleOnChange` useCallback
 const runOnChangeLogic = (editor: any) => {
-  setMsgDraft([...editor.children]);
+  newDraftState = editor;
+  return updateDraft([...editor.children]);
 }
 
 // Logic from `useEffect`
