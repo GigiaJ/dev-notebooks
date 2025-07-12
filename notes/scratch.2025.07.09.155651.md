@@ -1,6 +1,6 @@
 ---
 id: nmwab52k73ryuyn8ltggauf
-title: 'cinny-draft-sync'
+title: 'Cinny Cross Device Message Draft Sync'
 desc: ''
 updated: 1752354697686
 created: 1752094620353
