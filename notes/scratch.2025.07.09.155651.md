@@ -366,7 +366,7 @@ Now while those are normally React components, the only concern as far as syncin
 // Scenario 1: Test the onChange handler
 console.log('--- SCENARIO 1: Testing onChange ---');
 runOnChangeLogic(mockEditor);
-console.log('Result: setMsgDraft was called with:', newDraftState);
+console.log('Result: setMsgDraft was called with:', JSON.stringify(newDraftState));
 console.log('\n');
 
 
@@ -381,7 +381,7 @@ console.log('\n');
 // Scenario 3: Test the effect when content is DIFFERENT
 console.log('--- SCENARIO 3: Testing effect with new content ---');
 editorSpy = { reset: 0, insert: 0, select: 0 }; // Reset spy
-const incomingDraft = [{ type: 'p', children: [{ text: 'new server text' }] }];
+const incomingDraft = [{ type: 'paragraph', children: [{ text: 'new server text' }] }];
 runEffectLogic(incomingDraft, mockEditor);
 console.log('Result: Editor functions called:', editorSpy); // All should be 1
 ```
