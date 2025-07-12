@@ -2,7 +2,7 @@
 id: nmwab52k73ryuyn8ltggauf
 title: 'cinny-draft-sync'
 desc: ''
-updated: 1752095650112
+updated: 1752337059130
 created: 1752094620353
 jupyter:
   jupytext:
@@ -36,6 +36,7 @@ console.log('This is a test');
 # Cross Device Draft Sync
 
 
+##### Problem to solve
 Outlining the issue to solve is as followed:
 
 - Device A should be able to type a message and have it first stored in the local storage. The draft should then be synced to the server.
@@ -88,7 +89,8 @@ const mockMx = {
     },
   }),
 };
-<!-- #endraw -->
+
+```
 
 Now we'll start with pulling out toPlainText for testing since it has no inherent dependencies:
 
@@ -158,4 +160,8 @@ const mockEncryptedEvent = {
 const decryptedContent = await decryptDraft(mockMx, mockEncryptedEvent);
 console.log('Decrypted Content:', JSON.stringify(decryptedContent));
 // Expected output: The 'Hello World' content from our mock
-<!-- #endraw -->
+```
+
+Now we have a functional sample for "decrypting content". With that we can move towards actually writing the sync behavior from the server and local storage. It should be clarified that much of this is written as a result of the original behavior of useMessageDraft.tsx not being perfectly desirable. Sync bugs cause UI issues for the user and impact their ability to type messages. So instead of just trying to make minute changes we'll articulate each point until we reach a functional result.
+
+So next we should mock the local storage behavior. We can make an atom to store the plain Javascript object rather than actually using the IndexedDB. This functionally will behave the same for our intents of making sure the sync behavior between the local and server is consistent and well-behaved.
