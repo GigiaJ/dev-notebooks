@@ -303,3 +303,88 @@ const runServerSyncTest = async () => {
 
 await runServerSyncTest();
 ```
+
+A key situation to avoid is when syncing from the server and updating the local storage and editor... is that it is never allowed to resync back that update.
+
+The above code is not complete enough yet to check for such a circumstance, so below we should draft out a mock of the editor logic.
+
+```python
+// --- Mocks and Spies ---
+
+// Spies to track function calls
+let editorSpy = { reset: 0, insert: 0, select: 0 };
+let newDraftState: any = null;
+
+// A fake editor object with the properties our logic needs
+const mockEditor = {
+  children: [{ type: 'paragraph', children: [{ text: 'initial editor text' }] }],
+};
+
+// Mock functions that the logic will call
+const resetEditor = (editor: any) => {
+  editorSpy.reset++;
+  console.log('spy: resetEditor was called');
+};
+const Transforms = {
+  insertFragment: (editor: any, fragment: any) => { editorSpy.insert++; },
+  select: (editor: any, location: any) => { editorSpy.select++; },
+};
+const Editor = {
+  end: (editor: any, location: any) => 'end_location', // Just needs to return something
+};
+
+// This is our spy for the state update function
+const setMsgDraft = (newDraft: any) => {
+  newDraftState = newDraft;
+};
+```
+
+```python
+// --- Logic to Test ---
+
+// Logic from `handleOnChange` useCallback
+const runOnChangeLogic = (editor: any) => {
+  setMsgDraft([...editor.children]);
+}
+
+// Logic from `useEffect`
+const runEffectLogic = (msgDraft: any, editor: any) => {
+  if (JSON.stringify(msgDraft) === JSON.stringify(editor.children)) {
+    console.log('Effect logic: No changes detected.');
+    return;
+  }
+  
+  console.log('Effect logic: Changes detected, updating editor.');
+  resetEditor(editor);
+  Transforms.insertFragment(editor, msgDraft);
+  Transforms.select(editor, Editor.end(editor, []));
+}
+```
+
+Now while those are normally React components, the only concern as far as syncing cares is the changes incurred by said React components. So assuming their behavior is cleanly doable and enables testing out even the editor behavior which is important for actually providing a level of coverage to the end-user experience.
+
+```python
+// --- Test Runner ---
+
+// Scenario 1: Test the onChange handler
+console.log('--- SCENARIO 1: Testing onChange ---');
+runOnChangeLogic(mockEditor);
+console.log('Result: setMsgDraft was called with:', newDraftState);
+console.log('\n');
+
+
+// Scenario 2: Test the effect when content is the SAME
+console.log('--- SCENARIO 2: Testing effect with no changes ---');
+editorSpy = { reset: 0, insert: 0, select: 0 }; // Reset spy
+runEffectLogic(mockEditor.children, mockEditor);
+console.log('Result: Editor functions called:', editorSpy); // All should be 0
+console.log('\n');
+
+
+// Scenario 3: Test the effect when content is DIFFERENT
+console.log('--- SCENARIO 3: Testing effect with new content ---');
+editorSpy = { reset: 0, insert: 0, select: 0 }; // Reset spy
+const incomingDraft = [{ type: 'p', children: [{ text: 'new server text' }] }];
+runEffectLogic(incomingDraft, mockEditor);
+console.log('Result: Editor functions called:', editorSpy); // All should be 1
+```
