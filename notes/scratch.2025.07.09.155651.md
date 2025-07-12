@@ -323,6 +323,7 @@ const mockEditor = {
 // Mock functions that the logic will call
 const resetEditor = (editor: any) => {
   editorSpy.reset++;
+  editor.children[0] = { type: 'paragraph', children: [{ text: '' }] }
   console.log('spy: resetEditor was called');
 };
 const Transforms = {
