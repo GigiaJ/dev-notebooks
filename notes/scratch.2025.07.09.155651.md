@@ -2,7 +2,7 @@
 id: nmwab52k73ryuyn8ltggauf
 title: 'cinny-draft-sync'
 desc: ''
-updated: 1752337059130
+updated: 1752354697686
 created: 1752094620353
 jupyter:
   jupytext:
@@ -163,3 +163,159 @@ console.log('Decrypted Content:', JSON.stringify(decryptedContent));
 Now we have a functional sample for "decrypting content". With that we can move towards actually writing the sync behavior from the server and local storage. It should be clarified that much of this is written as a result of the original behavior of useMessageDraft.tsx not being perfectly desirable. Sync bugs cause UI issues for the user and impact their ability to type messages. So instead of just trying to make minute changes we'll articulate each point until we reach a functional result.
 
 So next we should mock the local storage behavior. We can make an atom to store the plain Javascript object rather than actually using the IndexedDB. This functionally will behave the same for our intents of making sure the sync behavior between the local and server is consistent and well-behaved.
+
+```typescript
+// --- Mocks ---
+
+// Mock Jotai's state management
+const fakeDB = {}; // Our fake in-memory database
+const mockSetDraftEvent = async (newValue: any) => {
+  console.log('Mock setDraftEvent called with:', newValue);
+  fakeDB['draft-event-key'] = newValue;
+};
+
+// Mock debounce to run immediately
+const mockDebounce = (fn: Function, _wait: number) => {
+  return (...args: any[]) => fn(...args);
+};
+
+// Mock the server sync function
+let syncSpy = { wasCalled: false, data: null };
+const mockSyncDraftToServer = async (eventToSave: any) => {
+  console.log('Mock syncDraftToServer called with:', eventToSave);
+  syncSpy = { wasCalled: true, data: eventToSave };
+};
+```
+
+```typescript
+// --- Functions to Test ---
+
+const debouncedUpdate =  mockDebounce(async (newContent: any[]) => {
+  const isEmpty = newContent.length <= 1 && toPlainText(newContent) === '';
+
+  const partial = {
+    sender: '@user:example.com',
+    type: 'm.room.message',
+    room_id: 'my-room-id',
+    content: {
+      msgtype: 'm.text',
+      body: 'draft',
+      content: isEmpty ? [] : newContent,
+    },
+    origin_server_ts: Date.now(),
+    event_id: `$fake-event-id`,
+  };
+
+  await mockSetDraftEvent(partial);
+  await mockSyncDraftToServer(partial);
+}, 25);
+
+const updateDraft = async (newContent: any[]) => {
+  return debouncedUpdate(newContent);
+};
+```
+
+```typescript
+// --- Test ---
+
+const myNewDraftContent = [
+  { type: 'paragraph', children: [{ text: 'This is my new draft.' }] }
+];
+
+await updateDraft(myNewDraftContent);
+
+console.log('Final state of fakeDB:', fakeDB);
+console.log('Final state of syncSpy:', syncSpy);
+```
+
+The above provide a simulation of storing the text into the local storage and syncing to the server as well as debouncing adequetely. From that it is possible to simulate user input and syncing from the server to then test for any concurrency issues or sync problems. After which the edge case solutions can be implemented in the form of a settings check which will need to be mocked too.
+
+```typescript
+// --- Mocks ---
+
+// A fake MatrixEvent class to simulate server events
+class MockMatrixEvent {
+  constructor(private event: any) {}
+  getType = () => this.event.type;
+  getContent = () => this.event.content;
+}
+```
+
+```typescript
+// --- Functions to Test ---
+
+// This is a simplified version of handleDraftContent for our test
+const handleDraftContent = async (event: any): Promise<any[] | null> => {
+  if (!event) return null;
+  return event.content?.content ?? null;
+}
+
+// The main function we are testing
+const handleAccountData = async (event: MockMatrixEvent, roomId: string, localDraft: any) => {
+  if (event.getType() !== 'org.cinny.draft.v1') return;
+
+  const allSyncedDrafts = event.getContent();
+  const serverEvent = allSyncedDrafts[roomId] as any | undefined;
+
+  if (!serverEvent) return;
+
+  const isServerNewer = serverEvent.origin_server_ts > (localDraft?.origin_server_ts ?? 0);
+
+  if (isServerNewer) {
+    const serverContent = await handleDraftContent(serverEvent);
+    const localContent = await handleDraftContent(localDraft);
+
+    if (toPlainText(serverContent) !== toPlainText(localContent)) {
+      await mockSetDraftEvent(serverEvent);
+    }
+  }
+}
+
+```
+
+```typescript
+// --- The Test Runner ---
+
+const runServerSyncTest = async () => {
+  const roomId = 'my-room-id';
+
+
+  // == SCENARIO 1: Server draft is NEWER and should update local state ==
+  console.log('--- Running Scenario 1: Server is Newer ---');
+  const localDraft = {
+    origin_server_ts: 1000,
+    content: { content: [{ type: 'p', children: [{ text: 'local version' }] }] }
+  };
+  const newerServerEvent = {
+    origin_server_ts: 2000, // Newer timestamp
+    content: { content: [{ type: 'p', children: [{ text: 'server version' }] }] }
+  };
+  let mockServerData = new MockMatrixEvent({
+    type: 'org.cinny.draft.v1',
+    content: { [roomId]: newerServerEvent }
+  });
+  
+  await handleAccountData(mockServerData, roomId, localDraft);
+  console.log('Result 1:', fakeDB['draft-event-key']);
+  console.log('\n');
+
+  // Reset DB with the initial local draft
+  fakeDB['draft-event-key'] = localDraft;
+
+  // == SCENARIO 2: Server draft is OLDER and should be ignored ==
+  console.log('--- Running Scenario 2: Server is Older ---');
+  const olderServerEvent = {
+    origin_server_ts: 500, // Older timestamp
+    content: { content: [{ type: 'p', children: [{ text: 'old server version' }] }] }
+  };
+  mockServerData = new MockMatrixEvent({
+    type: 'org.cinny.draft.v1',
+    content: { [roomId]: olderServerEvent }
+  });
+  
+  await handleAccountData(mockServerData, roomId, localDraft);
+  console.log('Result 2:', fakeDB['draft-event-key']);
+}
+
+await runServerSyncTest();
+```
