@@ -46,6 +46,20 @@ we check if the room supports encryption and if it does not support it then we s
 to encrypt our messages and similarly we decrypt them the same way. For Javascript we have the matrix-js-sdk which doesn't have a direct
 generic way to decrypt, so we do have to utilize casting our CryptoAPI to the CryptoBackend to fulfil that goal.
 
+##### Edge cases to consider
+An important facet to consider is the app is usable while offline. This means one could be offline and type a draft on a mobile device and turn the screen off. After which one may then type another message on another device.
+
+A draft should never be overwritten, so the in previous attempts a timestamp check isn't enough. Nor is a event-id. In the above scenario it is feasible to have the same event-id since they'll share one. If neither device sends the message then for most cases they'll still have the same device id. If the online device types a completely different message then the mobile device reconnects to the internet... The draft might be entirely shifted.
+
+Some ideas to consider might be always changing the event-id when the draft is empty. When a user does a select all and changes the draft an onChange listener detects for the brief moment when the text field is 'empty' before the new characters typed appear.
+
+This is a decent solution for that case, but let us say that the user DID mean to revise the mobile message draft and do in fact no longer want it. This is generally seen as a *send*. 
+
+Mapping draft IDs won't scale but showing the user diffs between their server draft and client draft may come across as clunky. 
+
+That said, offering an opt-in or toggle like "Always show me the diff between drafts and allow me to choose" might not be an awful option.
+So considering the above it seems like opt-in to cloud message draft sync is the best possible idea where the server ALWAYS has the absolute true state and the default behavior is local draft sync in which the local storage is used.
+
 
 ##### Mocking
 Now we're going to begin with mocking out the Matrix client to test the rest of the behavior in the file.
