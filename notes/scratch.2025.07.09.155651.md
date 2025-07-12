@@ -308,7 +308,7 @@ A key situation to avoid is when syncing from the server and updating the local 
 
 The above code is not complete enough yet to check for such a circumstance, so below we should draft out a mock of the editor logic.
 
-```python
+```typescript
 // --- Mocks and Spies ---
 
 // Spies to track function calls
@@ -339,7 +339,7 @@ const setMsgDraft = (newDraft: any) => {
 };
 ```
 
-```python
+```typescript
 // --- Logic to Test ---
 
 // Logic from `handleOnChange` useCallback
@@ -363,7 +363,7 @@ const runEffectLogic = (msgDraft: any, editor: any) => {
 
 Now while those are normally React components, the only concern as far as syncing cares is the changes incurred by said React components. So assuming their behavior is cleanly doable and enables testing out even the editor behavior which is important for actually providing a level of coverage to the end-user experience.
 
-```python
+```typescript
 // --- Test Runner ---
 
 // Scenario 1: Test the onChange handler
