@@ -396,8 +396,8 @@ Now while those are normally React components, the only concern as far as syncin
 
 // Scenario 1: Test the onChange handler
 console.log('--- SCENARIO 1: Testing onChange ---');
-runOnChangeLogic(mockEditor);
-console.log('Result: setMsgDraft was called with:', JSON.stringify(newDraftState));
+await runOnChangeLogic(mockEditor);
+console.log('Result: setMsgDraft was called with:', JSON.stringify(fakeDB[roomId]));
 console.log('\n');
 
 
