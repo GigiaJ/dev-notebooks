@@ -378,11 +378,11 @@ const runEffectLogic = async (msgDraft: any, editor: any) => {
     return;
   }
   if (JSON.stringify(msgDraft) === JSON.stringify(editor.children)) {
-    console.log('Effect logic: No changes detected.');
+    console.debug('Effect logic: No changes detected.');
     return;
   }
   
-  console.log('Effect logic: Changes detected, updating editor.');
+  console.debug('Effect logic: Changes detected, updating editor.');
   resetEditor(editor);
   Transforms.insertFragment(editor, msgDraft);
   Transforms.select(editor, Editor.end(editor, []));
