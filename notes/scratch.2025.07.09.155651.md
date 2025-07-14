@@ -162,7 +162,7 @@ const mockSetDraftEvent = async (newValue: any) => {
 };
 
 // Mock debounce to run immediately
-const mockDebounce = (fn: Function, _wait: number) => {
+const mockDebounce = async (fn: Function, _wait: number) => {
   return (...args: any[]) => fn(...args);
 };
 
