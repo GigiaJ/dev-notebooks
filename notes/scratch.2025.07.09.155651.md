@@ -252,12 +252,11 @@ const handleDraftContent = async (event: any): Promise<any[] | null> => {
 }
 
 // The main function we are testing
-const handleAccountData = async (event: MockMatrixEvent, roomId: string, localDraft: any) => {
-  if (event.getType() !== 'org.cinny.draft.v1') return;
-
-  const allSyncedDrafts = event.getContent();
-  const serverEvent = allSyncedDrafts[roomId] as any | undefined;
-
+const handleAccountData = async (event: any, roomId: string, localDraft: any) => {
+  //if (event.getType() !== 'org.cinny.draft.v1') return; Not applicable here
+  //const allSyncedDrafts = event.content;
+  //const serverEvent = allSyncedDrafts[roomId] as any | undefined;
+  const serverEvent = event;
   if (!serverEvent) return;
 
   const isServerNewer = serverEvent.origin_server_ts > (localDraft?.origin_server_ts ?? 0);
