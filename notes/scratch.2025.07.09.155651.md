@@ -340,7 +340,8 @@ let newDraftState: any = null;
 
 // A fake editor object with the properties our logic needs
 const mockEditor = {
-  children: [{ type: 'paragraph', children: [{ text: 'Some random initial text' }] }],
+  children: [{ type: 'paragraph', children: [{ text: 'Some random initial text.' }] }],
+  updateContent: (text: string) => { mockEditor.children[0].children[0].text = text },
 };
 
 // Mock functions that the logic will call
