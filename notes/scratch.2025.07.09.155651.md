@@ -313,7 +313,15 @@ const runServerSyncTest = async () => {
 
 
   await handleAccountData(mockServerData, roomId, localDraft);
-  console.log('Result 2:', fakeDB['draft-event-key']);
+  console.log('Result 2:', JSON.stringify(fakeDB[roomId]));
+
+  mockServerData.origin_server_ts = 2500;
+  mockServerData.content = {
+    msgtype: 'm.text',
+    body: 'draft',
+    content: [{ type: 'paragraph', children: [{ text: 'new new server version' }] }]
+  }
+
 }
 
 await runServerSyncTest();
