@@ -365,9 +365,9 @@ const Editor = {
 // --- Logic to Test ---
 
 // Logic from `handleOnChange` useCallback
-const runOnChangeLogic = (editor: any) => {
-  newDraftState = editor;
-  return updateDraft([...editor.children]);
+const runOnChangeLogic = async (editor: any) => {
+  console.debug(JSON.stringify(editor.children))
+  return await updateDraft([...editor.children]);
 }
 
 // Logic from `useEffect`
