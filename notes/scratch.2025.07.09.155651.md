@@ -279,19 +279,19 @@ const handleAccountData = async (event: any, roomId: string, localDraft: any) =>
 const runServerSyncTest = async () => {
 
   // == SCENARIO 1: Server draft is NEWER and should update local state ==
-  console.log('--- Running Scenario 1: Server is Newer ---');
-  const localDraft = {
-    origin_server_ts: 1000,
-    content: { content: [{ type: 'p', children: [{ text: 'local version' }] }] }
-  };
-  const newerServerEvent = {
-    origin_server_ts: 2000, // Newer timestamp
-    content: { content: [{ type: 'p', children: [{ text: 'server version' }] }] }
-  };
-  let mockServerData = new MockMatrixEvent({
-    type: 'org.cinny.draft.v1',
-    content: { [roomId]: newerServerEvent }
-  });
+  console.debug('--- Running Scenario 1: Server is Newer ---');
+  const localDraft =  {
+  sender: '@user:example.com',
+  type: 'm.room.message',
+  room_id: roomId,
+  content: {
+    msgtype: 'm.text',
+    body: 'draft',
+    content: [{ type: 'paragraph', children: [{ text: 'server version' }] }]
+  },
+  origin_server_ts: 2000,
+  event_id: `$fake-event-id`,
+};
   
   await handleAccountData(mockServerData, roomId, localDraft);
   console.log('Result 1:', fakeDB['draft-event-key']);
