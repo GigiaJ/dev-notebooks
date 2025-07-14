@@ -226,6 +226,20 @@ class MockMatrixEvent {
   getType = () => this.event.type;
   getContent = () => this.event.content;
 }
+
+let mockServerData = {
+  sender: '@user:example.com',
+  type: 'm.room.message',
+  room_id: roomId,
+  content: {
+    msgtype: 'm.text',
+    body: 'draft',
+    content: [{ type: 'paragraph', children: [{ text: 'server version' }] }]
+  },
+  origin_server_ts: 1000,
+  event_id: `$fake-event-id`,
+};
+
 ```
 
 ```typescript
