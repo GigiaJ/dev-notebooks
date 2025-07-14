@@ -183,7 +183,7 @@ const debouncedUpdate = await mockDebounce(async (newContent: any[]) => {
   const partial = {
     sender: '@user:example.com',
     type: 'm.room.message',
-    room_id: 'my-room-id',
+    room_id: roomId,
     content: {
       msgtype: 'm.text',
       body: 'draft',
