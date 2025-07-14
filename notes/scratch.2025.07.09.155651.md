@@ -277,8 +277,6 @@ const handleAccountData = async (event: any, roomId: string, localDraft: any) =>
 // --- The Test Runner ---
 
 const runServerSyncTest = async () => {
-  const roomId = 'my-room-id';
-
 
   // == SCENARIO 1: Server draft is NEWER and should update local state ==
   console.log('--- Running Scenario 1: Server is Newer ---');
