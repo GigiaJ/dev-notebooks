@@ -351,7 +351,9 @@ const resetEditor = (editor: any) => {
   console.debug('spy: resetEditor was called');
 };
 const Transforms = {
-  insertFragment: (editor: any, fragment: any) => { editorSpy.insert++; },
+  insertFragment: (editor: any, fragment: any) => {
+    editor.children = fragment;
+    editorSpy.insert++; },
   select: (editor: any, location: any) => { editorSpy.select++; },
 };
 const Editor = {
