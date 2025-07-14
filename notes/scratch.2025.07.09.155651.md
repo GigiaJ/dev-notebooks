@@ -177,7 +177,7 @@ const mockSyncDraftToServer = async (eventToSave: any) => {
 ```typescript
 // --- Functions to Test ---
 
-const debouncedUpdate =  mockDebounce(async (newContent: any[]) => {
+const debouncedUpdate = await mockDebounce(async (newContent: any[]) => {
   const isEmpty = newContent.length <= 1 && toPlainText(newContent) === '';
 
   const partial = {
