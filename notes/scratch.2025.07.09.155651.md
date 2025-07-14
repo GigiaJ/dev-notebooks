@@ -294,23 +294,24 @@ const runServerSyncTest = async () => {
 };
   
   await handleAccountData(mockServerData, roomId, localDraft);
-  console.log('Result 1:', fakeDB['draft-event-key']);
+  console.debug('Result 1:', JSON.stringify(fakeDB[roomId]));
   console.log('\n');
 
   // Reset DB with the initial local draft
-  fakeDB['draft-event-key'] = localDraft;
+  fakeDB[roomId] = localDraft;
 
   // == SCENARIO 2: Server draft is OLDER and should be ignored ==
   console.log('--- Running Scenario 2: Server is Older ---');
-  const olderServerEvent = {
-    origin_server_ts: 500, // Older timestamp
-    content: { content: [{ type: 'p', children: [{ text: 'old server version' }] }] }
+  mockServerData.origin_server_ts = 500;
+  mockServerData.content = {
+    msgtype: 'm.text',
+    body: 'draft',
+    content: [
+      { type: 'paragraph', children: [{ text: 'old server version' }] }
+    ]
   };
-  mockServerData = new MockMatrixEvent({
-    type: 'org.cinny.draft.v1',
-    content: { [roomId]: olderServerEvent }
-  });
-  
+
+
   await handleAccountData(mockServerData, roomId, localDraft);
   console.log('Result 2:', fakeDB['draft-event-key']);
 }
