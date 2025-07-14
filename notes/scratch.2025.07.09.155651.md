@@ -151,6 +151,9 @@ So next we should mock the local storage behavior. We can make an atom to store 
 ```typescript
 // --- Mocks ---
 
+// Mock consistent Room Id
+const roomId = 'draft-event-key';
+
 // Mock Jotai's state management
 const fakeDB = {}; // Our fake in-memory database
 const mockSetDraftEvent = async (newValue: any) => {
