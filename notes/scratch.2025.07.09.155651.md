@@ -167,7 +167,7 @@ const mockDebounce = async (fn: Function, _wait: number) => {
 };
 
 // Mock the server sync function
-let syncSpy = { wasCalled: false, data: null };
+let syncSpy = {};
 const mockSyncDraftToServer = async (eventToSave: any) => {
   console.log('Mock syncDraftToServer called with:', eventToSave);
   syncSpy = { wasCalled: true, data: eventToSave };
