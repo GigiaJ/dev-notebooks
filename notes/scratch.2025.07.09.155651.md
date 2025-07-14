@@ -157,8 +157,8 @@ const roomId = 'draft-event-key';
 // Mock Jotai's state management
 const fakeDB = {}; // Our fake in-memory database
 const mockSetDraftEvent = async (newValue: any) => {
-  console.log('Mock setDraftEvent called with:', newValue);
-  fakeDB['draft-event-key'] = newValue;
+  console.debug('Mock setDraftEvent called with:', JSON.stringify(newValue));
+  fakeDB[roomId] = newValue;
 };
 
 // Mock debounce to run immediately
