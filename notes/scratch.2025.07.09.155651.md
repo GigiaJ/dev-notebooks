@@ -371,7 +371,12 @@ const runOnChangeLogic = async (editor: any) => {
 }
 
 // Logic from `useEffect`
-const runEffectLogic = (msgDraft: any, editor: any) => {
+const runEffectLogic = async (msgDraft: any, editor: any) => {
+  if (!msgDraft || msgDraft === 0) {
+    console.debug("No message draft passed.")
+    resetEditor(editor);
+    return;
+  }
   if (JSON.stringify(msgDraft) === JSON.stringify(editor.children)) {
     console.log('Effect logic: No changes detected.');
     return;
