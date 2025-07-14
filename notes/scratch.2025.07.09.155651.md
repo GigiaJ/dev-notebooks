@@ -198,7 +198,7 @@ const debouncedUpdate = await mockDebounce(async (newContent: any[]) => {
 }, 25);
 
 const updateDraft = async (newContent: any[]) => {
-  return debouncedUpdate(newContent);
+  return await debouncedUpdate(newContent);
 };
 ```
 
