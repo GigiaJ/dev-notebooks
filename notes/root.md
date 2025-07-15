@@ -2,10 +2,12 @@
 id: 976w92ynv3mtajuok4h5qiq
 title: Root
 desc: ''
-updated: 1752540124987
+updated: 1752541035464
 created: 1752093884110
 ---
 # Personal notes and Jupyter notebooks (in MD)
+
+Currently this just contains a notebook in markdown format for solving Cinny Cross-device message drafts. It isn't particular neat, but I figured it'd be a fun starting point for doing literate programming.
 
 ## Lookup
 
