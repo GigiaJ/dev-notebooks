@@ -413,6 +413,9 @@ console.log('\n');
 console.log('--- SCENARIO 3: Testing effect with new content ---');
 editorSpy = { reset: 0, insert: 0, select: 0 }; // Reset spy
 const incomingDraft = [{ type: 'paragraph', children: [{ text: 'new server text' }] }];
-runEffectLogic(incomingDraft, mockEditor);
+
+console.log(JSON.stringify(mockEditor));
+await runEffectLogic(incomingDraft, mockEditor);
+console.log(JSON.stringify(mockEditor));
 console.log('Result: Editor functions called:', editorSpy); // All should be 1
 ```
