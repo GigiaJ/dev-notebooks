@@ -2,7 +2,7 @@
 id: 976w92ynv3mtajuok4h5qiq
 title: Root
 desc: ''
-updated: 1752541035464
+updated: 1752541340544
 created: 1752093884110
 ---
 # Personal notes and Jupyter notebooks (in MD)
@@ -25,6 +25,6 @@ Currently being mirrored like so:
 ```
 git remote add origin https://gitea.something.something/jaggar/dev-notebooks.git
 git remote set-url --add --push origin https://gitea.something.something/jaggar/dev-notebooks.git
-git remote set-url --add --push origin https://github.com/GigiaJ/dev-notebooks.git
-git remote set-url --add --push origin https://codeberg.org/Gigia/dev-notebooks.git
+git remote set-url --add --push origin git@gitea.something.something:jaggar/dev-notebooks.git
+git remote set-url --add --push origin ssh://git@codeberg.org/Gigia/dev-notebooks.git
 ```
