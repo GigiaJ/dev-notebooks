@@ -403,8 +403,8 @@ console.log('\n');
 
 // Scenario 2: Test the effect when content is the SAME
 console.log('--- SCENARIO 2: Testing effect with no changes ---');
-editorSpy = { reset: 0, insert: 0, select: 0 }; // Reset spy
-runEffectLogic(mockEditor.children, mockEditor);
+await runEffectLogic(mockEditor.children, mockEditor);
+console.log(JSON.stringify(mockEditor));
 console.log('Result: Editor functions called:', editorSpy); // All should be 0
 console.log('\n');
 
