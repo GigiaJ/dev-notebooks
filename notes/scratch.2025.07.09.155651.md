@@ -411,7 +411,6 @@ console.log('\n');
 
 // Scenario 3: Test the effect when content is DIFFERENT
 console.log('--- SCENARIO 3: Testing effect with new content ---');
-editorSpy = { reset: 0, insert: 0, select: 0 }; // Reset spy
 const incomingDraft = [{ type: 'paragraph', children: [{ text: 'new server text' }] }];
 
 console.log(JSON.stringify(mockEditor));
