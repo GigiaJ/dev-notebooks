@@ -418,4 +418,81 @@ console.log(JSON.stringify(mockEditor));
 await runEffectLogic(incomingDraft, mockEditor);
 console.log(JSON.stringify(mockEditor));
 console.log('Result: Editor functions called:', editorSpy); // All should be 1
+
+editorSpy = { reset: 0, insert: 0, select: 0 }; // Reset spy
 ```
+
+Now that the key portions are mocked it is now possible to mock more completely and start trying to create more realistic scenarios.
+One situation is preventing the local from resyncing back to the server just because it synced from the server and updated the local editor.
+
+```typescript
+// --- Helper functions ---
+const freshEvent = (content: any) => {
+    return {
+  sender: '@user:example.com',
+  type: 'm.room.message',
+  room_id: roomId,
+  content: {
+    msgtype: 'm.text',
+    body: 'draft',
+    content: content 
+  },
+  origin_server_ts: Date.now(),
+  event_id: `$fake-event-id`,
+}
+};
+
+const getEditorText = () => {
+  console.log(mockEditor?.children[0].children[0].text);
+}
+
+const updateEditorText = async (text) => {
+  await runEffectLogic([{ type: 'paragraph', children: [{ text: text }] }], mockEditor);
+  await runOnChangeLogic(mockEditor);
+  getEditorText();
+}
+
+const syncFromServer = async () => {
+  console.debug("Syncing from server. Displaying new Editor content.")
+  await handleAccountData(syncSpy[roomId], roomId, fakeDB[roomId]);
+  await runEffectLogic(syncSpy[roomId].content.content, mockEditor);
+  await runOnChangeLogic(mockEditor);
+  getEditorText();
+}
+
+
+const forceSyncToServer = async (text) => {
+  console.debug("Forcing a sync to server. Displaying new server content.");
+  await mockSyncDraftToServer(freshEvent([{ type: 'paragraph', children: [{ text: text }] }]))
+}
+
+```
+
+```typescript
+// --- Logic to Test ---
+
+// No-op the debug statements
+console.debug = () => {};
+
+// Any key event will be do runOnEffect and runOnChange
+await updateEditorText("User typed first message")
+
+// Any on sync from server will trigger an update to the editor currently
+await syncFromServer();
+
+
+await updateEditorText("Random stuff here 1 2 3")
+
+//await syncFromServer();
+await updateEditorText("Random stuff here 2  3")
+
+await forceSyncToServer("Another client updated the draft.");
+await syncFromServer();
+
+await forceSyncToServer("Test test test.");
+await syncFromServer();
+//await syncFromServer();
+
+```
+
+
